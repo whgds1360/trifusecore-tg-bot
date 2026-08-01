@@ -32,8 +32,8 @@ class KeyboardCreator():
                             InlineKeyboardButton(text="❌ Остановить", callback_data="end_forward"),
                         ],
                         [
-                            InlineKeyboardButton(text="⚙️ Установить конфиг", callback_data="config_forward")
-                            InlineKeyboardButton(text="❌ Удалить существующий", callback_data="delete_config_forward"),
+                            InlineKeyboardButton(text="⚙️ Установить конфиг", callback_data="config_forward"),
+                            InlineKeyboardButton(text="❌ Удалить существующий", callback_data="delete_forward_config"),
                         ],
                         [
                             InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info_forward")

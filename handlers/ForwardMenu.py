@@ -9,6 +9,8 @@ from bot.KeyboardCreator import KeyboardCreator
 
 from states.StatesManager import StatesManager
 
+from typing import Dict
+
 forward_menu_router = Router()
 
 
@@ -25,22 +27,44 @@ async def config_forward(callback: types.CallbackQuery, state: FSMContext) -> No
                 await state.set_state(StatesManager.waiting_for_config)
 
     await callback.answer()
-    
-    
+
+
 @forward_menu_router.message(StatesManager.waiting_for_config)
-async def post_forward_config(message: types.Message, state: FSMContext):
-    if ((DataBase.get_engine() and DataBase.get_sessionmaker) and callback.message and not isinstance(callback.message, InaccessibleMessage)):
+async def post_forward_config(message: types.Message, state: FSMContext) -> None:
+    if ((DataBase.get_engine() and DataBase.get_sessionmaker) and message and not isinstance(message, InaccessibleMessage)):
         if not message.text:
             await message.answer(text="Вы ввели неверный конфиг попробуйте еще раз!")
             return
-        
-        with DataBase.get_sessionmaker()() as session:
-            users = DataBase.get_users
-            
-            
-        
-        ready_data = parse_config(message.text)
 
+        with DataBase.get_sessionmaker()() as session:
+            users = DataBase.get_users()
+
+            user = session.scalar(select(users).where(users.tg_id == message.chat.id)) #type: ignore
+            if user:
+                user.forward_config = message.text
+
+                session.commit()
+                
+                await message.answer(text="Конфиг успешно сохранен!")
+
+    await state.clear()
+
+
+@forward_menu_router.callback_query(F.data == "delete_forward_config")
+async def delete_forward_config(callback: types.CallbackQuery) -> None:
+    if callback.message and not isinstance(callback.message, InaccessibleMessage):
+        with DataBase.get_sessionmaker()() as session:
+            users = DataBase.get_users()
+
+            user = session.scalar(select(users).where(users.tg_id == callback.message.chat.id)) #type: ignore
+            if user:
+                user.forward_config = ""
+
+                session.commit()
+
+                await callback.message.answer(text="Конфиг успешно удален!")
+
+    callback.answer()
 
 
 @forward_menu_router.callback_query(F.data == "back_forward")
@@ -59,7 +83,7 @@ async def info_forward(callback: types.CallbackQuery) -> None:
     await callback.answer()
 
 
-def parse_config(config_text: str) -> dict:
+def parse_config(config_text: str) -> Dict[str, str]:
     """
     Парсит строку конфига с разделителем &
     Пример: LIST_OF_LISTEN=1,2,3&VK_TOKEN=token&VK_COMMUNITY_TOKEN=123&CHAT_ID=456

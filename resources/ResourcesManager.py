@@ -19,7 +19,7 @@ class ResourcesManager(BaseModel):
     DEFAULT_ENV_FILE: ClassVar[Path] = Path("resources/config.env")
 
     TG_TOKEN: str = Field(default="", init=True, repr=False)
-    #DB_URL: str = Field(default="", init=True, repr=False) потом использовать!
+    DB_URL: str = Field(default="", init=True, repr=False)
 
     @staticmethod
     def __load_env_config(env_path: Path) -> None:
@@ -36,12 +36,15 @@ class ResourcesManager(BaseModel):
         """
         Загружает конфигурацию из .env
         """
-
         cls.__load_env_config(env_path=env_path)
 
         tg_token = getenv("TG_TOKEN", "")
+        db_url = getenv("DB_URL", "")
 
-        data = {"TG_TOKEN": tg_token}
+        data = {
+            "TG_TOKEN": tg_token,
+            "DB_URL": db_url
+            }
 
         try:
             return cls.model_validate(data)
