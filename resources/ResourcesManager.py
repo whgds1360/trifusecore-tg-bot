@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
-from typing import Final, final
+from typing import Final, final, ClassVar
 from dotenv import load_dotenv
 from os import getenv
 from pydantic import BaseModel, Field, ConfigDict
@@ -16,10 +16,10 @@ class ResourcesManager(BaseModel):
         validate_default=True,
     )
 
-    DEFAULT_ENV_FILE: Final[Path] = Path("config.env")
+    DEFAULT_ENV_FILE: ClassVar[Path] = Path("resources/config.env")
 
     TG_TOKEN: str = Field(default="", init=True, repr=False)
-    DB_URL: str = Field(default="", init=True, repr=False)
+    #DB_URL: str = Field(default="", init=True, repr=False) потом использовать!
 
     @staticmethod
     def __load_env_config(env_path: Path) -> None:
@@ -32,15 +32,14 @@ class ResourcesManager(BaseModel):
             logger.warning("Предупреждение: файл окружения не найден")
 
     @classmethod
-    def load_config(cls, env_path: Path = Path()) -> Resources:
+    def load_config(cls, env_path: Path = DEFAULT_ENV_FILE) -> ResourcesManager:
         """
         Загружает конфигурацию из .env
         """
-        env_path = env_path or cls.DEFAULT_ENV_FILE
 
         cls.__load_env_config(env_path=env_path)
 
-        tg_token = getenv("TG_TOKEN")
+        tg_token = getenv("TG_TOKEN", "")
 
         data = {"TG_TOKEN": tg_token}
 

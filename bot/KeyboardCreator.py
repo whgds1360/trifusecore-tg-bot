@@ -21,3 +21,23 @@ class KeyboardCreator():
                 ]
             ]
         )
+
+    @staticmethod
+    def forward_menu() -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text="✅ Начать", callback_data="begin_forward"),
+                            InlineKeyboardButton(text="❌ Остановить", callback_data="end_forward"),
+                        ],
+                        [
+                            InlineKeyboardButton(text="⚙️ Установить конфиг", callback_data="config_forward")
+                        ],
+                        [
+                            InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info_forward")
+                        ],
+                        [
+                            InlineKeyboardButton(text="↩️ Назад", callback_data="back_forward")
+                        ]
+                    ]
+                )
