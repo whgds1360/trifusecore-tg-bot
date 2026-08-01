@@ -1,9 +1,9 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from typing import final
 
+
 @final
 class KeyboardCreator():
-    
     @staticmethod
     def main_menu() -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(
@@ -21,4 +21,3 @@ class KeyboardCreator():
                 ]
             ]
         )
-    

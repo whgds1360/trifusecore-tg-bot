@@ -8,7 +8,7 @@ from loguru import logger
 
 
 @final
-class Resources(BaseModel):
+class ResourcesManager(BaseModel):
 
     model_config = ConfigDict(
         extra='ignore',
@@ -19,10 +19,7 @@ class Resources(BaseModel):
     DEFAULT_ENV_FILE: Final[Path] = Path("config.env")
 
     TG_TOKEN: str = Field(default="", init=True, repr=False)
-    #LIST_OF_LISTEN: str = Field(default="", init=True, repr=False) нужно получать от бота тг
-    #VK_TOKEN: str = Field(default="", init=True, repr=False) нужно получать от бота тг
-    #VK_COMMUNITY_TOKEN: str = Field(default="", init=True, repr=False) нужно получать от бота тг
-    #CHAT_ID: str = Field(default="", init=True, repr=False) нужно получать от бота тг
+    DB_URL: str = Field(default="", init=True, repr=False)
 
     @staticmethod
     def __load_env_config(env_path: Path) -> None:
@@ -35,7 +32,7 @@ class Resources(BaseModel):
             logger.warning("Предупреждение: файл окружения не найден")
 
     @classmethod
-    def load_config(cls, env_path: Path = None) -> Resources:
+    def load_config(cls, env_path: Path = Path()) -> Resources:
         """
         Загружает конфигурацию из .env
         """
@@ -51,4 +48,3 @@ class Resources(BaseModel):
             return cls.model_validate(data)
         except AttributeError:
             return cls()
-        
