@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from typing import final
 
 
@@ -32,6 +33,7 @@ class KeyboardCreator():
                         ],
                         [
                             InlineKeyboardButton(text="⚙️ Установить конфиг", callback_data="config_forward")
+                            InlineKeyboardButton(text="❌ Удалить существующий", callback_data="delete_config_forward"),
                         ],
                         [
                             InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info_forward")

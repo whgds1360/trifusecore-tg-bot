@@ -1,9 +1,11 @@
-from loguru import logger
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+
 from handlers.AllRouters import all_routers
 from resources.ResourcesManager import ResourcesManager
+
+from loguru import logger
 
 
 class Core:
