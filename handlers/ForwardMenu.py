@@ -1,4 +1,4 @@
-from aiogram import Router, types, F
+from aiogram import Router, types, F, Bot
 from aiogram.types import InaccessibleMessage
 from aiogram.fsm.context import FSMContext
 
@@ -6,12 +6,78 @@ from database.DataBase import DataBase
 from sqlalchemy import select
 
 from bot.KeyboardCreator import KeyboardCreator
-
+from forward.ForwardManager import ForwardManager
 from states.StatesManager import StatesManager
 
-from typing import Dict
+from typing import List
+from loguru import logger
+from asyncio import create_task
 
 forward_menu_router = Router()
+active_listeners: List[int] = []
+
+
+@forward_menu_router.callback_query(F.data == "begin_forward")
+async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
+    if not callback.message or isinstance(callback.message, InaccessibleMessage):
+        await callback.answer("Сообщение недоступно", show_alert=True)
+        return
+
+    user_id = callback.from_user.id
+
+    if user_id in active_listeners:
+        await callback.answer(text="❗У вас уже включена пересылка❗", show_alert=True)
+        return
+
+    try:
+        with DataBase.get_sessionmaker()() as session:
+            users = DataBase.get_users()
+            user = session.scalar(select(users).where(users.tg_id == user_id)) #type: ignore
+
+            if not user:
+                await callback.message.answer(text="❌ Пользователь не найден!")
+                await callback.answer()
+                return
+
+            if user.is_active_forward == "1": #type: ignore
+                await callback.message.answer(text="❗У вас уже включена пересылка❗", show_alert=True)
+                return
+
+            if not user.forward_config: #type: ignore
+                await callback.message.answer(text="❌ Конфиг не найден!")
+                await callback.answer()
+                return
+
+            ready_config = parse_config(user.forward_config) #type: ignore
+
+            if 'VK_TOKEN' not in ready_config or 'VK_COMMUNITY_TOKEN' not in ready_config or 'LIST_OF_LISTEN' not in ready_config:
+                await callback.message.answer(text="❌ В конфиге отсутствуют обязательные поля!")
+                await callback.answer()
+                return
+
+            user.is_active_forward = "1"
+            session.commit()
+
+            active_listeners.append(callback.message.chat.id)
+
+            task = create_task(
+                ForwardManager.vk_listener(
+                    bot=bot,
+                    chat_id=callback.message.chat.id,
+                    vk_token=ready_config["VK_TOKEN"],
+                    vk_community_token=ready_config["VK_COMMUNITY_TOKEN"],
+                    list_of_listen=ready_config["LIST_OF_LISTEN"],
+                    active_listeners=active_listeners
+                )
+            )
+
+            await callback.message.answer(text="✅ Пересылка включена!")
+
+    except Exception as e:
+        logger.error(f"Ошибка в begin_forward: {e}")
+        await callback.message.answer(text=f"❌ Ошибка: {e}")
+
+    await callback.answer()
 
 
 @forward_menu_router.callback_query(F.data == "config_forward")
@@ -42,9 +108,10 @@ async def post_forward_config(message: types.Message, state: FSMContext) -> None
             user = session.scalar(select(users).where(users.tg_id == message.chat.id)) #type: ignore
             if user:
                 user.forward_config = message.text
+                user.have_forward_config = 1
 
                 session.commit()
-                
+
                 await message.answer(text="Конфиг успешно сохранен!")
 
     await state.clear()
@@ -58,11 +125,15 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
 
             user = session.scalar(select(users).where(users.tg_id == callback.message.chat.id)) #type: ignore
             if user:
-                user.forward_config = ""
+                if user.is_active_forward == "0": #type: ignore
+                    user.forward_config = ""
+                    user.have_forward_config = 0
 
-                session.commit()
+                    session.commit()
 
-                await callback.message.answer(text="Конфиг успешно удален!")
+                    await callback.message.answer(text="Конфиг успешно удален!")
+                else:
+                    await callback.message.answer(text="Сначала остановите пересылку!")
 
     callback.answer()
 
@@ -86,7 +157,7 @@ async def info_forward(callback: types.CallbackQuery) -> None:
 def parse_config(config_text: str) -> Dict[str, str]:
     """
     Парсит строку конфига с разделителем &
-    Пример: LIST_OF_LISTEN=1,2,3&VK_TOKEN=token&VK_COMMUNITY_TOKEN=123&CHAT_ID=456
+    Пример: LIST_OF_LISTEN=1,2,3&VK_TOKEN=token&VK_COMMUNITY_TOKEN=123
     Возвращает словарь с параметрами
     """
     config_dict = {}

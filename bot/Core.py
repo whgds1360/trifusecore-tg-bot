@@ -12,7 +12,7 @@ from loguru import logger
 class Core:
 
     @staticmethod
-    async def initialization_tg_bot():
+    async def initialization_tg_bot() -> None:
         resources = ResourcesManager.load_config()
         DataBase.connect(db_url=resources.DB_URL)
 
