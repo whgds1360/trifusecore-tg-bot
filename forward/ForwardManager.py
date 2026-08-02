@@ -4,8 +4,8 @@ from aiovk.longpoll import BotsLongPoll
 from aiogram import Bot
 
 from loguru import logger
-
-from typing import final, List
+from asyncio import Task, CancelledError
+from typing import final, Dict
 
 
 @final
@@ -18,55 +18,64 @@ class ForwardManager:
         vk_token: str,
         vk_community_token: str,
         list_of_listen: str,
-        active_listeners: List[int]
+        active_listeners: Dict[int, Task]
     ):
 
         try:
-            session = TokenSession(access_token=vk_token)
-            api = API(session)
+            async with TokenSession(access_token=vk_token) as token_session:
+                api = API(token_session)
 
-            group_id = int(vk_community_token)
+                group_id = int(vk_community_token)
 
-            longpoll = BotsLongPoll(session_or_api=api, group_id=group_id)
+                longpoll = BotsLongPoll(session_or_api=api, group_id=group_id)
 
-            ready_list_of_listen = [int(x.strip()) for x in list_of_listen.split(",") if x.strip()]
+                ready_list_of_listen = [int(x.strip()) for x in list_of_listen.split(",") if x.strip()]
+                
+                logger.info(f"Лист прослушки!{ready_list_of_listen}")
 
-            async for event in longpoll.iter():
-                if event.type == 'message_new':
-                    msg = event.object.message
+                async for event in longpoll.iter():
 
-                    if msg:
-                        text = msg.get('text', '')
-                        peer_id = msg.get('peer_id')
+                    if chat_id not in active_listeners:
+                        break
 
-                        if text and peer_id in ready_list_of_listen:
-                            try:
+                    if event.get("type") == 'message_new':
+                        msg = event.get("object").get("message")
 
-                                user_info = await api.users.get(
-                                    user_ids=[msg['from_id']],
-                                    fields=['first_name', 'last_name']
-                                )
-                                if user_info:
-                                    user = user_info[0]
-                                    name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+                        if msg:
+                            logger.info("Получено сообщений!")
+                            text = msg.get('text', '')
+                            peer_id = msg.get('peer_id')
 
-                                    await bot.send_message(
-                                        chat_id=chat_id,
-                                        text=f"💬 Новое сообщение от {name}:\n{text}"
+                            if text:
+                                try:
+                                    logger.info("Получено сообщений!2323")
+                                    user_info = await api.users.get(
+                                        user_ids=[msg['from_id']],
+                                        fields=['first_name', 'last_name']
                                     )
+                                    if user_info:
+                                        logger.info("Получено сообщений!4455454")
+                                        user = user_info[0]
+                                        name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
 
-                            except Exception as e:
-                                logger.warning(f"Не удалось получить имя пользователя: {e}")
+                                        await bot.send_message(
+                                            chat_id=chat_id,
+                                            text=f"💬 Новое сообщение от {name}:\n{text}"
+                                        )
 
-        except Exception as e:
-            if chat_id in active_listeners:
-                active_listeners.remove(chat_id)
-            logger.error(f"❌ Ошибка в слушателе: {e}")
-            await bot.send_message(
-                chat_id=chat_id,
-                text="❌ Ваш конфиг не корректный!"
-            )
+                                except Exception as e:
+                                    logger.warning(f"Не удалось получить имя пользователя: {e}")
+                            else:
+                                logger.info(peer_id)
+        except CancelledError:
+            pass
+
+        except Exception as error:
+            logger.error(f"Ошибка в слушателе: {error}")
+
         finally:
-            if chat_id in active_listeners:
-                active_listeners.remove(chat_id)
-                logger.info(f"⏹️ Слушатель для чата {chat_id} завершён")
+
+            logger.error("Логер упал!")
+            task = active_listeners.pop(chat_id, None)
+            if task and not task.done():
+                task.cancel()

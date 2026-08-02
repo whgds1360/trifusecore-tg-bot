@@ -25,7 +25,7 @@ class DataBase:
     @classmethod
     def get_engine(cls) -> Engine:
         if cls._ENGINE is None:
-            raise RuntimeError("База данных не подключена!")
+            raise RuntimeError("База данных не подключена. Вызовите connect()")
         return cls._ENGINE
 
     @classmethod
