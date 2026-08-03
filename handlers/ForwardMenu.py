@@ -9,6 +9,7 @@ from bot.KeyboardCreator import KeyboardCreator
 from forward.ForwardManager import ForwardManager
 from states.StatesManager import StatesManager
 from utils.UtilsManager import UtilsManager
+from text_config.TextConfigManager import TextConfigManager
 
 from typing import Dict
 from loguru import logger
@@ -97,7 +98,7 @@ async def stop_forward(callback: types.CallbackQuery) -> None:
 
                     user = session.scalar(
                         select(users).where(users.tg_id == chat_id))  # type: ignore
- 
+
                     if user:
                         user.is_active_forward = "0"
                         session.commit()
@@ -180,12 +181,21 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
                         session.commit()
 
                         await callback.message.answer(text="✅Конфиг успешно удален!")
- 
+
                     else:
                         await callback.answer(text="❗Сначала остановите пересылку❗", show_alert=True)
 
         except Exception as error:
             logger.error(f"Ошибка удаления конфига из БД: {error}")
+
+    await callback.answer()
+
+
+@forward_menu_router.callback_query(F.data == "main_info")
+async def info_forward(callback: types.CallbackQuery) -> None:
+    if callback.message and not isinstance(callback.message,
+                                           InaccessibleMessage):
+        await callback.message.answer(text=TextConfigManager.config["main_info"])
 
     await callback.answer()
 
@@ -196,14 +206,5 @@ async def back_main_menu(callback: types.CallbackQuery) -> None:
                                            InaccessibleMessage):
         await callback.message.edit_text(text="Главное меню",
                                          reply_markup=KeyboardCreator.main_menu())
-
-    await callback.answer()
-
-
-@forward_menu_router.callback_query(F.data == "info_forward")
-async def info_forward(callback: types.CallbackQuery) -> None:
-    if callback.message and not isinstance(callback.message,
-                                           InaccessibleMessage):
-        await callback.message.answer(text="Пока нету")
 
     await callback.answer()

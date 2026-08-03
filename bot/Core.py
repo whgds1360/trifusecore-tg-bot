@@ -8,10 +8,12 @@ from aiogram.enums import ParseMode
 from handlers.AllRouters import all_routers
 from resources.ResourcesManager import ResourcesManager
 from database.DataBase import DataBase
+from text_config.TextConfigManager import TextConfigManager
 
 from loguru import logger
 from sqlalchemy import update
 from typing import final
+
 
 @final
 class Core:
@@ -37,6 +39,8 @@ class Core:
     async def initialization_tg_bot() -> None:
         Core._patch_ssl()
         resources = ResourcesManager.load_config()
+        TextConfigManager.load_config()
+
         DataBase.connect(db_url=resources.DB_URL)
 
         bot = Bot(token=resources.TG_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

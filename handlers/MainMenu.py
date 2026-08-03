@@ -3,6 +3,7 @@ from aiogram.types import InaccessibleMessage
 from aiogram.filters import Command
 
 from bot.KeyboardCreator import KeyboardCreator
+from text_config.TextConfigManager import TextConfigManager
 
 
 main_menu_router = Router()
@@ -22,6 +23,27 @@ async def show_forward_menu(callback: types.CallbackQuery) -> None:
             text="🔀 Меню пересылки",
             reply_markup=KeyboardCreator.forward_menu()
         )
+
+    await callback.answer()
+
+
+@main_menu_router.callback_query(F.data == "ai_menu")
+async def show_ai_menu(callback: types.CallbackQuery) -> None:
+    if callback.message and not isinstance(callback.message, 
+                                           InaccessibleMessage):
+        await callback.message.edit_text(
+            text="🔀 Меню нейронки",
+            reply_markup=KeyboardCreator.ai_mod_menu()
+        )
+
+    await callback.answer()
+
+
+@main_menu_router.callback_query(F.data == "info_forward")
+async def info_forward(callback: types.CallbackQuery) -> None:
+    if callback.message and not isinstance(callback.message,
+                                           InaccessibleMessage):
+        await callback.message.answer(text=TextConfigManager.config["forward_info"])
 
     await callback.answer()
 

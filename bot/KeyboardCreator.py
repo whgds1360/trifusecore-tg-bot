@@ -15,7 +15,7 @@ class KeyboardCreator():
                     InlineKeyboardButton(text="🤖 Нейро", callback_data="ai_menu")
                 ],
                 [
-                    InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info")
+                    InlineKeyboardButton(text="ℹ️ Инфо", callback_data="main_info")
                 ],
                 [
                     InlineKeyboardButton(text="❌ Закрыть", callback_data="close")

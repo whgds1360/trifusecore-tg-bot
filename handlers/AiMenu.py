@@ -3,6 +3,7 @@ from aiogram.types import InaccessibleMessage
 
 from ai.AiManager import AiManager
 from bot.KeyboardCreator import KeyboardCreator
+from text_config.TextConfigManager import TextConfigManager
 
 from database.DataBase import DataBase
 from sqlalchemy import select
@@ -56,7 +57,7 @@ async def change_mod_photo(callback: types.CallbackQuery) -> None:
 async def info_forward(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
-        await callback.message.answer(text="Пока нету")
+        await callback.message.answer(text=TextConfigManager.config["ai_info"])
 
     await callback.answer()
 
