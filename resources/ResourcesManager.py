@@ -42,4 +42,3 @@ class ResourcesManager(BaseModel):
         cls.TG_TOKEN = getenv("TG_TOKEN", "")
         cls.DB_URL = getenv("DB_URL", "")
         cls.AI_API_KEY = getenv("AI_API_KEY", "")
-
