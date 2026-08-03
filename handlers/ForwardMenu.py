@@ -47,8 +47,7 @@ async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
                     ready_config = UtilsManager.parse_config_for_forward(user.forward_config) #type: ignore
 
                     if ('VK_TOKEN' not in ready_config
-                        or 'VK_COMMUNITY_TOKEN' not in ready_config
-                            or 'LIST_OF_LISTEN' not in ready_config):
+                        or 'VK_COMMUNITY_TOKEN' not in ready_config):
 
                         await callback.answer(text="❗ В конфиге отсутствуют обязательные поля!❗", show_alert=True)
                         return

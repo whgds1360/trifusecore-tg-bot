@@ -34,7 +34,6 @@ class ForwardManager:
 
                         if msg:
                             text = msg.get('text', '')
-                            peer_id = msg.get('peer_id')
 
                             if text:
                                 try:
@@ -61,8 +60,7 @@ class ForwardManager:
             logger.error(f"Ошибка в слушателе: {error}")
 
         finally:
-            logger.error("Перессылка аварийно завершилась!")
             task = active_listeners.pop(chat_id, None)
-            
+
             if task and not task.done():
                 task.cancel()
