@@ -11,12 +11,16 @@ from database.DataBase import DataBase
 
 from loguru import logger
 from sqlalchemy import update
+from typing import final
 
-
+@final
 class Core:
     @staticmethod
     def _patch_ssl() -> None:
-        """Применяет патч для отключения проверки SSL сертификатов"""
+        """
+        Применяет патч для отключения проверки SSL сертификатов
+        т.к. проблему с сертификатом я не решил
+        """
         _old_create_connection = aiohttp.TCPConnector.__init__
 
         def _patched_init(self, *args, **kwargs):

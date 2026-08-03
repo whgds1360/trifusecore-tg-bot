@@ -3,9 +3,9 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 
-from typing import Optional, ClassVar
+from typing import Optional, ClassVar, final
 
-
+@final
 class DataBase:
 
     _ENGINE: ClassVar[Optional[Engine]] = None
