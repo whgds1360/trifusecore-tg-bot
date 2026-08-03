@@ -30,44 +30,44 @@ async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
 
         try:
             with DataBase.get_sessionmaker()() as session:
-                users = DataBase.get_users()
-
+                users = DataBase.get_users() 
                 user = session.scalar(
-                    select(users).where(users.tg_id == chat_id)) #type: ignore
+                        select(users).where(users.tg_id == chat_id)) #type: ignore
 
-                if user.is_active_forward == "1": #type: ignore
-                    await callback.answer(text="❗У вас уже включена пересылка❗", show_alert=True)
-                    return
+                if user:
+                    if user.is_active_forward == "1": #type: ignore
+                        await callback.answer(text="❗У вас уже включена пересылка❗", show_alert=True)
+                        return
 
-                if not user.forward_config: #type: ignore
-                    await callback.answer(text="❗У вас не настроен конфиг❗", show_alert=True)
-                    return
+                    if not user.forward_config: #type: ignore
+                        await callback.answer(text="❗У вас не настроен конфиг❗", show_alert=True)
+                        return
 
-                ready_config = UtilsManager.parse_config_for_forward(user.forward_config) #type: ignore
+                    ready_config = UtilsManager.parse_config_for_forward(user.forward_config) #type: ignore
 
-                if ('VK_TOKEN' not in ready_config
-                    or 'VK_COMMUNITY_TOKEN' not in ready_config
-                        or 'LIST_OF_LISTEN' not in ready_config):
+                    if ('VK_TOKEN' not in ready_config
+                        or 'VK_COMMUNITY_TOKEN' not in ready_config
+                            or 'LIST_OF_LISTEN' not in ready_config):
 
-                    await callback.answer(text="❗ В конфиге отсутствуют обязательные поля!❗", show_alert=True)
-                    return
+                        await callback.answer(text="❗ В конфиге отсутствуют обязательные поля!❗", show_alert=True)
+                        return
 
-                user.is_active_forward = "1" #type: ignore
-                session.commit()
+                    user.is_active_forward = "1" #type: ignore
+                    session.commit()
 
-                task = create_task(
-                    ForwardManager.vk_listener(
-                        bot=bot,
-                        chat_id=callback.message.chat.id,
-                        vk_token=ready_config["VK_TOKEN"],
-                        vk_community_token=ready_config["VK_COMMUNITY_TOKEN"],
-                        active_listeners=active_listeners
+                    task = create_task(
+                        ForwardManager.vk_listener(
+                            bot=bot,
+                            chat_id=callback.message.chat.id,
+                            vk_token=ready_config["VK_TOKEN"],
+                            vk_community_token=ready_config["VK_COMMUNITY_TOKEN"],
+                            active_listeners=active_listeners
+                        )
                     )
-                )
 
-                active_listeners[callback.message.chat.id] = task
+                    active_listeners[callback.message.chat.id] = task
 
-                await callback.answer(text="✅ Пересылка включена!", show_alert=True)
+                    await callback.answer(text="✅ Пересылка включена!", show_alert=True)
 
         except Exception as e:
             logger.error(f"Ошибка в начале перессылки: {e}")
@@ -94,14 +94,14 @@ async def stop_forward(callback: types.CallbackQuery) -> None:
             try:
                 with DataBase.get_sessionmaker()() as session:
                     users = DataBase.get_users()
-                    
+
                     user = session.scalar(
                         select(users).where(users.tg_id == chat_id))  # type: ignore
-                    
+ 
                     if user:
                         user.is_active_forward = "0"
                         session.commit()
-                        
+
             except Exception as error:
                 logger.error(f"Ошибка остановки перессылки: {error}")
         else:
@@ -155,7 +155,7 @@ async def post_forward_config(message: types.Message,
                     session.commit()
 
                     await message.answer(text="✅Конфиг успешно сохранен!")
-                    
+
         except Exception as error:
             logger.error(f"Ошибка сохранения конфига в БД: {error}")
 
@@ -180,13 +180,13 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
                         session.commit()
 
                         await callback.message.answer(text="✅Конфиг успешно удален!")
-                        
+ 
                     else:
                         await callback.answer(text="❗Сначала остановите пересылку❗", show_alert=True)
-                        
+
         except Exception as error:
             logger.error(f"Ошибка удаления конфига из БД: {error}")
-            
+
     await callback.answer()
 
 

@@ -43,3 +43,20 @@ class KeyboardCreator():
                         ]
                     ]
                 )
+
+    @staticmethod
+    def ai_mod_menu() -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text="🧠 Ответ на вопросы", callback_data="change_mod_request"),
+                            InlineKeyboardButton(text="📷 Генерация фото", callback_data="change_mod_photo"),
+                        ],
+                        [
+                            InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info_ai_mod")
+                        ],
+                        [
+                            InlineKeyboardButton(text="↩️ Назад", callback_data="back_ai_mod")
+                        ]
+                    ]
+                    )
