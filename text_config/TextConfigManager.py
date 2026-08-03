@@ -1,6 +1,6 @@
 from __future__ import annotations
 from json import load, JSONDecodeError
-from typing import final, Dict
+from typing import final, Dict, ClassVar
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from loguru import logger
@@ -15,7 +15,7 @@ class TextConfigManager(BaseModel):
         validate_default=True,
     )
 
-    config: Dict[str, str] = Field(default={}, init=True, repr=True)
+    config: ClassVar[Dict[str, str]] = Field(default={}, init=True, repr=True)
 
     @classmethod
     def load_config(cls, path: str = "text_config/config.json") -> None:

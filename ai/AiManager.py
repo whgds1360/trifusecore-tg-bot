@@ -1,11 +1,13 @@
 from typing import final, ClassVar, Optional
 from groq import AsyncGroq
+from resources.ResourcesManager import ResourcesManager
+from loguru import logger
 
 
 @final
 class AiManager:
 
-    client: ClassVar = AsyncGroq()
+    client: ClassVar = AsyncGroq(api_key=ResourcesManager.AI_API_KEY)
 
     @classmethod
     async def get_response(cls, content: str) -> Optional[str]:

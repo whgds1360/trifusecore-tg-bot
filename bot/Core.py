@@ -38,12 +38,9 @@ class Core:
     @staticmethod
     async def initialization_tg_bot() -> None:
         Core._patch_ssl()
-        resources = ResourcesManager.load_config()
-        TextConfigManager.load_config()
+        DataBase.connect(db_url=ResourcesManager.DB_URL)
 
-        DataBase.connect(db_url=resources.DB_URL)
-
-        bot = Bot(token=resources.TG_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+        bot = Bot(token=ResourcesManager.TG_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
         dp = Dispatcher()
 
         logger.debug("Инициализация тг бота успешна!")

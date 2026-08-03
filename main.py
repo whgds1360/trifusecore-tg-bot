@@ -1,5 +1,17 @@
-from bot.Core import Core
+from resources.ResourcesManager import ResourcesManager
+from text_config.TextConfigManager import TextConfigManager
+
 from asyncio import run
 
+from loguru import logger
+
 if __name__ == "__main__":
-    run(Core.initialization_tg_bot())
+    try:
+        ResourcesManager.load_config()
+        TextConfigManager.load_config()
+
+        from bot.Core import Core
+        run(Core.initialization_tg_bot())
+
+    except Exception as error:
+        logger.error(f"Ошибка инициализации бота: {error}")

@@ -5,6 +5,7 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 from typing import Optional, ClassVar, final
 
+
 @final
 class DataBase:
 
