@@ -21,6 +21,7 @@ class ResourcesManager(BaseModel):
     TG_TOKEN: ClassVar[str]
     DB_URL: ClassVar[str]
     AI_API_KEY: ClassVar[str]
+    TEMP_MAIL_API_KEY: ClassVar[str]
 
     @staticmethod
     def __load_env_config(env_path: Path) -> None:
@@ -42,3 +43,4 @@ class ResourcesManager(BaseModel):
         cls.TG_TOKEN = getenv("TG_TOKEN", "")
         cls.DB_URL = getenv("DB_URL", "")
         cls.AI_API_KEY = getenv("AI_API_KEY", "")
+        cls.TEMP_MAIL_API_KEY = getenv("TEMP_MAIL_API_KEY", "")

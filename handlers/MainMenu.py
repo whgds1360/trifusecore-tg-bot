@@ -29,12 +29,19 @@ async def show_forward_menu(callback: types.CallbackQuery) -> None:
 
 @main_menu_router.callback_query(F.data == "temp_mail_menu")
 async def temp_mail_menu(callback: types.CallbackQuery) -> None:
-    await callback.answer(text="⚙️Скоро будет", show_alert=True)
+    if callback.message and not isinstance(callback.message,
+                                           InaccessibleMessage):
+        await callback.message.edit_text(
+                text="🔀 Меню временной почты",
+                reply_markup=KeyboardCreator.temp_mail_menu()
+            )
+
+    await callback.answer()
 
 
 @main_menu_router.callback_query(F.data == "ai_menu")
 async def show_ai_menu(callback: types.CallbackQuery) -> None:
-    if callback.message and not isinstance(callback.message, 
+    if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
         await callback.message.edit_text(
             text="🔀 Меню нейронки",

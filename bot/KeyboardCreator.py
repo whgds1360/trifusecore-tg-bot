@@ -60,3 +60,20 @@ class KeyboardCreator():
                         ]
                     ]
                     )
+
+    @staticmethod
+    def temp_mail_menu() -> InlineKeyboardMarkup:
+        return InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text="📧 Создать почту", callback_data="make_mail"),
+                            InlineKeyboardButton(text="📨 Получить список писем", callback_data="get_mails"),
+                        ],
+                        [
+                            InlineKeyboardButton(text="ℹ️ Инфо", callback_data="info_temp_mail")
+                        ],
+                        [
+                            InlineKeyboardButton(text="↩️ Назад", callback_data="back_temp_mail")             
+                        ]
+                    ]
+        )
