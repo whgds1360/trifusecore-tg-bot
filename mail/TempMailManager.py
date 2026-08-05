@@ -1,5 +1,4 @@
-from tempmail import AsyncTempMailClient, EmailAddress
-from resources.ResourcesManager import ResourcesManager
+from secmail import AsyncClient
 
 from loguru import logger
 from typing import final, Optional, ClassVar
@@ -8,32 +7,30 @@ from typing import final, Optional, ClassVar
 @final
 class TempMailManager:
 
-    __client: ClassVar[AsyncTempMailClient]
+    __client: ClassVar[AsyncClient]
 
     @classmethod
     def init_client(cls) -> None:
-        cls.__client = AsyncTempMailClient(api_key=ResourcesManager.TEMP_MAIL_API_KEY)
+        cls.__client = AsyncClient()
 
     @classmethod
-    async def make_mail(cls) -> Optional[EmailAddress]:
+    def make_mail(cls) -> Optional[str]:
         try:
-            async with cls.__client as client:
-                email = await client.create_email()
-                return email
+            email = cls.__client.random_email(amount=1)
+            return email[0]
         except Exception as error:
             logger.error(f"Ошибка создания временной почты {error}")
         return None
 
     @classmethod
-    async def get_mails(cls, email: EmailAddress) -> Optional[str]:
+    async def get_mails(cls, email: str) -> Optional[str]:
         try:
-            async with cls.__client as client:
-                result = ""
-                messages = await client.list_email_messages(email.email)
-                if messages:
-                    for msg in messages:
-                        result += (f"📧От кого:\n{msg.from_addr}\n\n📝Тема:\n{msg.subject}\n\n\n")
-                    return result
+            result = ""
+            messages = await cls.__client.get_inbox(email)
+            if messages:
+                for msg in messages:
+                    result += (f"📧От кого:\n{msg.from_address}\n\n📝Тема:\n{msg.subject}\n")
+                return result
         except Exception as error:
             logger.error(f"Ошибка при получении писем: {error}")
         return None

@@ -13,7 +13,7 @@ from typing import Dict
 from loguru import logger
 
 temp_mail_menu_router = Router()
-active_mails: Dict[int, EmailAddress] = {}
+active_mails: Dict[int, str] = {}
 
 
 @temp_mail_menu_router.callback_query(F.data == "make_mail")
@@ -33,10 +33,10 @@ async def make_mail(callback: types.CallbackQuery) -> None:
         except Exception as error:
             logger.error(f"Ошибка изменения статуса пользования временной почтой: {error}")
 
-        email = await TempMailManager.make_mail()
+        email = TempMailManager.make_mail()
         if email:
             active_mails[callback.message.chat.id] = email
-            callback.message.answer(text=f"Ваша почта: {email.email}")
+            callback.message.answer(text=f"Ваша почта: {email}")
         else:
             logger.error("Прилетела пустая почта")
 
@@ -49,7 +49,7 @@ async def get_mails(callback: types.CallbackQuery) -> None:
                                            InaccessibleMessage):
         email = active_mails.get(callback.message.chat.id, False)
         if email is EmailAddress:
-            msg = TempMailManager.get_mails(email=email)
+            msg = await TempMailManager.get_mails(email=email)
             if msg:
                 await callback.answer(text="❗У вас нет входящих сообщений❗")
             await callback.message.answer(text=f"Список писем:\n{msg}")
