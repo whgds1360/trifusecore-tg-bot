@@ -36,6 +36,7 @@ async def make_mail(callback: types.CallbackQuery) -> None:
         email = await TempMailManager.make_mail()
         if email:
             active_mails[callback.message.chat.id] = email
+            callback.message.answer(text=f"Ваша почта: {email.email}")
         else:
             logger.error("Прилетела пустая почта")
 

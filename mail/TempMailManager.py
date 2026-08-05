@@ -12,7 +12,7 @@ class TempMailManager:
 
     @classmethod
     def init_client(cls) -> None:
-        cls.__client = AsyncTempMailClient(api_key=ResourcesManager.AI_API_KEY)
+        cls.__client = AsyncTempMailClient(api_key=ResourcesManager.TEMP_MAIL_API_KEY)
 
     @classmethod
     async def make_mail(cls) -> Optional[EmailAddress]:
