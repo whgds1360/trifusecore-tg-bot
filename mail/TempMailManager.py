@@ -11,7 +11,10 @@ class TempMailManager:
 
     @classmethod
     def init_client(cls) -> None:
-        cls.__client = AsyncClient()
+        try:
+            cls.__client = AsyncClient()
+        except Exception as error:
+            logger.error("Ошибка инициализации клиента врменной почты")
 
     @classmethod
     def make_mail(cls) -> Optional[str]:
