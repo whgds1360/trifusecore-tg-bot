@@ -171,18 +171,20 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
 
                 user = session.scalar(select(users).where(users.tg_id == callback.message.chat.id)) #type: ignore
                 if user:
+                    if user.have_forward_config == "1":  # type: ignore
+                        if user.is_active_forward == "0":  # type: ignore
 
-                    if user.is_active_forward == "0": #type: ignore
+                            user.forward_config = ""
+                            user.have_forward_config = "0"
 
-                        user.forward_config = ""
-                        user.have_forward_config = "0"
+                            session.commit()
 
-                        session.commit()
+                            await callback.message.answer(text="✅Конфиг успешно удален!")
 
-                        await callback.message.answer(text="✅Конфиг успешно удален!")
-
+                        else:
+                            await callback.answer(text="❗Сначала остановите пересылку❗", show_alert=True)
                     else:
-                        await callback.answer(text="❗Сначала остановите пересылку❗", show_alert=True)
+                        await callback.answer(text="❗У вас и так нету конфига❗", show_alert=True)
 
         except Exception as error:
             logger.error(f"Ошибка удаления конфига из БД: {error}")

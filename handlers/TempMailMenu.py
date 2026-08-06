@@ -1,6 +1,5 @@
 from aiogram import Router, types, F
 from aiogram.types import InaccessibleMessage
-from tempmail import EmailAddress
 
 from database.DataBase import DataBase
 from sqlalchemy import select
@@ -13,7 +12,7 @@ from typing import Dict
 from loguru import logger
 
 temp_mail_menu_router = Router()
-active_mails: Dict[int, EmailAddress] = {}
+active_mails: Dict[int, TempMailManager] = {}
 
 
 @temp_mail_menu_router.callback_query(F.data == "make_mail")
@@ -33,9 +32,10 @@ async def make_mail(callback: types.CallbackQuery) -> None:
         except Exception as error:
             logger.error(f"Ошибка изменения статуса пользования временной почтой: {error}")
 
-        email = await TempMailManager.make_mail()
+        email = TempMailManager()
         if email:
             active_mails[callback.message.chat.id] = email
+            await callback.message.answer(text=f"💌Ваша почта: {email.email.email}")
         else:
             logger.error("Прилетела пустая почта")
 
@@ -46,12 +46,13 @@ async def make_mail(callback: types.CallbackQuery) -> None:
 async def get_mails(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
-        email = active_mails.get(callback.message.chat.id, False)
-        if email is EmailAddress:
-            msg = TempMailManager.get_mails(email=email)
-            if msg:
+        email = active_mails.get(callback.message.chat.id, None)
+        if email:
+            msg = email.get_inbox()
+            if not msg:
                 await callback.answer(text="❗У вас нет входящих сообщений❗")
-            await callback.message.answer(text=f"Список писем:\n{msg}")
+            else:
+                await callback.message.answer(text=f"📬Список писем:\n\n{msg}\n")
         else:
             await callback.answer(text="❗У вас нет активной временной почты, создай её❗", show_alert=True)
 
