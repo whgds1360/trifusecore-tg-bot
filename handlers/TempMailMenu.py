@@ -52,7 +52,7 @@ async def get_mails(callback: types.CallbackQuery) -> None:
             if not msg:
                 await callback.answer(text="❗У вас нет входящих сообщений❗")
             else:
-                await callback.message.answer(text=f"Список писем:\n{msg}", parse_mode=None)
+                await callback.message.answer(text=f"📬Список писем:\n\n{msg}", parse_mode=None)
         else:
             await callback.answer(text="❗У вас нет активной временной почты, создай её❗", show_alert=True)
 
