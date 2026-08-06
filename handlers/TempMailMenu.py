@@ -36,6 +36,7 @@ async def make_mail(callback: types.CallbackQuery) -> None:
         if email:
             active_mails[callback.message.chat.id] = email
             await callback.message.answer(text=f"💌Ваша почта: {email.email.email}")
+
         else:
             logger.error("Прилетела пустая почта")
 
@@ -52,7 +53,7 @@ async def get_mails(callback: types.CallbackQuery) -> None:
             if not msg:
                 await callback.answer(text="❗У вас нет входящих сообщений❗")
             else:
-                await callback.message.answer(text=f"📬Список писем:\n\n{msg}\n")
+                await callback.message.answer(text=f"📬Список писем:\n\n{msg}\n", parse_mode="HTML")
         else:
             await callback.answer(text="❗У вас нет активной временной почты, создай её❗", show_alert=True)
 

@@ -4,11 +4,12 @@ import ssl
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram_sentinel import SentinelConfig, Sentinel
 
 from handlers.AllRouters import all_routers
 from resources.ResourcesManager import ResourcesManager
 from database.DataBase import DataBase
-from text_config.TextConfigManager import TextConfigManager
+
 
 from loguru import logger
 from sqlalchemy import update
@@ -42,6 +43,15 @@ class Core:
 
         bot = Bot(token=ResourcesManager.TG_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
         dp = Dispatcher()
+
+        # https://pypi.org/project/aiogram-sentinel/
+        config = SentinelConfig(
+                    throttling_default_max=10,  # 10 messages per window
+                    throttling_default_per_seconds=60,  # 60 second window
+                    debounce_default_window=2,  # 2 second debounce
+                    )
+
+        router, infra = await Sentinel.setup(dp, config)
 
         logger.debug("Инициализация тг бота успешна!")
 
