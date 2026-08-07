@@ -1,5 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.types import InaccessibleMessage
+from aiogram_sentinel import rate_limit, debounce
 
 from database.DataBase import DataBase
 from sqlalchemy import select
@@ -16,6 +17,8 @@ active_mails: Dict[int, TempMailManager] = {}
 
 
 @temp_mail_menu_router.callback_query(F.data == "make_mail")
+@rate_limit(1, 5)
+@debounce(2)
 async def make_mail(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
@@ -44,6 +47,8 @@ async def make_mail(callback: types.CallbackQuery) -> None:
 
 
 @temp_mail_menu_router.callback_query(F.data == "get_mails")
+@rate_limit(1, 5)
+@debounce(2)
 async def get_mails(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
@@ -61,6 +66,8 @@ async def get_mails(callback: types.CallbackQuery) -> None:
 
 
 @temp_mail_menu_router.callback_query(F.data == "info_temp_mail")
+@rate_limit(1, 5)
+@debounce(2)
 async def info_forward(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
@@ -70,6 +77,8 @@ async def info_forward(callback: types.CallbackQuery) -> None:
 
 
 @temp_mail_menu_router.callback_query(F.data == "back_temp_mail")
+@rate_limit(1, 5)
+@debounce(2)
 async def back_main_menu(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):

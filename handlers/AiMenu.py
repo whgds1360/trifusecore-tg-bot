@@ -1,6 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.types import InaccessibleMessage
 from aiogram.fsm.context import FSMContext
+from aiogram_sentinel import rate_limit, debounce
 
 from ai.AiManager import AiManager
 from bot.KeyboardCreator import KeyboardCreator
@@ -17,6 +18,8 @@ ai_menu_router = Router()
 
 
 @ai_menu_router.callback_query(F.data == "change_mod_request")
+@rate_limit(1, 5)
+@debounce(2)
 async def change_mod_request(callback: types.CallbackQuery,
                              state: FSMContext) -> None:
     if (callback.message
@@ -32,6 +35,8 @@ async def change_mod_request(callback: types.CallbackQuery,
 
 
 @ai_menu_router.message(StatesManager.wait_query_get_response_ai)
+@rate_limit(1, 5)
+@debounce(2)
 async def wait_query_get_response_ai(message: types.Message,
                                      state: FSMContext) -> None:
     if (message
@@ -62,6 +67,8 @@ async def wait_query_get_response_ai(message: types.Message,
 
 
 @ai_menu_router.callback_query(F.data == "change_mod_photo")
+@rate_limit(1, 5)
+@debounce(2)
 async def change_mod_photo(callback: types.CallbackQuery) -> None:
     if (callback.message
         and not isinstance(callback.message, InaccessibleMessage)
@@ -72,6 +79,8 @@ async def change_mod_photo(callback: types.CallbackQuery) -> None:
 
 
 @ai_menu_router.callback_query(F.data == "info_ai_mod")
+@rate_limit(1, 5)
+@debounce(2)
 async def info_forward(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
@@ -81,6 +90,8 @@ async def info_forward(callback: types.CallbackQuery) -> None:
 
 
 @ai_menu_router.callback_query(F.data == "back_ai_mod")
+@rate_limit(1, 5)
+@debounce(2)
 async def back_main_menu(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):

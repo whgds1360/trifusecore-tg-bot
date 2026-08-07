@@ -1,6 +1,7 @@
 from aiogram import Router, types, F, Bot
 from aiogram.types import InaccessibleMessage
 from aiogram.fsm.context import FSMContext
+from aiogram_sentinel import rate_limit, debounce
 
 from database.DataBase import DataBase
 from sqlalchemy import select
@@ -20,6 +21,8 @@ active_listeners: Dict[int, Task] = {}
 
 
 @forward_menu_router.callback_query(F.data == "begin_forward")
+@rate_limit(1, 5)
+@debounce(2)
 async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
     if callback.message and not isinstance(callback.message,
                                           InaccessibleMessage):
@@ -77,6 +80,8 @@ async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
 
 
 @forward_menu_router.callback_query(F.data == "end_forward")
+@rate_limit(1, 5)
+@debounce(2)
 async def stop_forward(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message, InaccessibleMessage):
         chat_id = callback.message.chat.id
@@ -111,6 +116,8 @@ async def stop_forward(callback: types.CallbackQuery) -> None:
 
 
 @forward_menu_router.callback_query(F.data == "config_forward")
+@rate_limit(1, 5)
+@debounce(2)
 async def config_forward(callback: types.CallbackQuery,
                          state: FSMContext) -> None:
     if ((DataBase.get_engine()
@@ -133,6 +140,8 @@ async def config_forward(callback: types.CallbackQuery,
 
 
 @forward_menu_router.message(StatesManager.waiting_for_config)
+@rate_limit(1, 5)
+@debounce(2)
 async def post_forward_config(message: types.Message,
                               state: FSMContext) -> None:
     if ((DataBase.get_engine()
@@ -163,6 +172,8 @@ async def post_forward_config(message: types.Message,
 
 
 @forward_menu_router.callback_query(F.data == "delete_forward_config")
+@rate_limit(1, 5)
+@debounce(2)
 async def delete_forward_config(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message, InaccessibleMessage):
         try:
@@ -193,6 +204,8 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
 
 
 @forward_menu_router.callback_query(F.data == "main_info")
+@rate_limit(1, 5)
+@debounce(2)
 async def info_forward(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
@@ -202,6 +215,8 @@ async def info_forward(callback: types.CallbackQuery) -> None:
 
 
 @forward_menu_router.callback_query(F.data == "back_forward")
+@rate_limit(1, 5)
+@debounce(2)
 async def back_main_menu(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):

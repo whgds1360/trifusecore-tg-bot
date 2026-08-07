@@ -1,6 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from aiogram.types import InaccessibleMessage
+from aiogram_sentinel import rate_limit, debounce
 
 from database.DataBase import DataBase
 from sqlalchemy import select
@@ -13,6 +14,8 @@ start_router = Router()
 
 
 @start_router.message(Command("start"))
+@rate_limit(1, 5)
+@debounce(2)
 async def cmd_start(message: types.Message):
     if ((DataBase.get_engine()
         and DataBase.get_sessionmaker)
