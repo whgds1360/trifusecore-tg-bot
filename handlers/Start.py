@@ -14,8 +14,8 @@ start_router = Router()
 
 
 @start_router.message(Command("start"))
-@rate_limit(1, 5)
-@debounce(2)
+@rate_limit(1, 20)
+@debounce(10)
 async def cmd_start(message: types.Message):
     if ((DataBase.get_engine()
         and DataBase.get_sessionmaker)

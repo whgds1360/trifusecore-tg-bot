@@ -51,7 +51,7 @@ class Core:
                     debounce_default_window=2,  # 2 second debounce
                     )
 
-        router, infra = await Sentinel.setup(dp, config)
+        sentinel_router, infra = await Sentinel.setup(dp, config)
 
         logger.debug("Инициализация тг бота успешна!")
 
@@ -66,6 +66,6 @@ class Core:
         except Exception as e:
             logger.error(f"❌ Ошибка сброса статусов: {e}")
 
-        dp.include_routers(*all_routers)
+        sentinel_router.include_routers(*all_routers)
 
         await dp.start_polling(bot)
