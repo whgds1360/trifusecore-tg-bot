@@ -25,7 +25,7 @@ class TextConfigManager(BaseModel):
             if not file_path.exists():
                 raise FileNotFoundError(f"Файл не найден: {path}")
 
-            with open(file="text_config/config.json", encoding="utf8") as file:
+            with open(file="config.json", encoding="utf8") as file:
                 data = load(file)
 
             cls.config = data
