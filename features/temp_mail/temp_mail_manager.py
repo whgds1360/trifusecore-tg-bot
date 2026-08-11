@@ -24,14 +24,18 @@ class TempMailManager:
 
                     try:
                         if msg_id:
-                            content = self.email.get_mail_content(mail_id=msg_id)
+                            content = self.email.get_mail_content(
+                                mail_id=msg_id)
                             if content:
                                 if len(content) > 500:
-                                    content = content[:500] + "...\n(текст обрезан)"
-                                result += (f"📧От кого:\n{from_addr}\n📝Тема:\n{subject}\n\n📜Содержание:\n{content}")
+                                    content = content[:500] + \
+                                        "...\n(текст обрезан)"
+                                result += (
+                                    f"📧От кого:\n{from_addr}\n📝Тема:\n{subject}\n\n📜Содержание:\n{content}")
 
                     except Exception as error:
-                        logger.error(f"Не удалось получить содержимое письма: {error}")
+                        logger.error(
+                            f"Не удалось получить содержимое письма: {error}")
 
                 return result
         except Exception as error:

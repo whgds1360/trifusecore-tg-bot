@@ -1,6 +1,6 @@
 from typing import final, ClassVar, Optional
 from groq import AsyncGroq
-from resources.ResourcesManager import ResourcesManager
+from core.resources_manager import ResourcesManager
 from loguru import logger
 
 

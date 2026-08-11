@@ -3,8 +3,8 @@ from aiogram.types import InaccessibleMessage
 from aiogram.filters import Command
 from aiogram_sentinel import rate_limit, debounce
 
-from bot.KeyboardCreator import KeyboardCreator
-from text_config.TextConfigManager import TextConfigManager
+from core.keyboard_creator import KeyboardCreator
+from core.text_config_manager import TextConfigManager
 
 
 main_menu_router = Router()
@@ -22,7 +22,7 @@ async def cmd_start(message: types.Message) -> None:
 @rate_limit(1, 10)
 @debounce(5)
 async def show_forward_menu(callback: types.CallbackQuery) -> None:
-    if callback.message and not isinstance(callback.message, 
+    if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
         await callback.message.edit_text(
             text="🔀 Меню пересылки",
@@ -39,9 +39,9 @@ async def temp_mail_menu(callback: types.CallbackQuery) -> None:
     if callback.message and not isinstance(callback.message,
                                            InaccessibleMessage):
         await callback.message.edit_text(
-                text="🔀 Меню временной почты",
-                reply_markup=KeyboardCreator.temp_mail_menu()
-            )
+            text="🔀 Меню временной почты",
+            reply_markup=KeyboardCreator.temp_mail_menu()
+        )
 
     await callback.answer()
 

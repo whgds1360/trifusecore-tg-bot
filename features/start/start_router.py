@@ -3,10 +3,10 @@ from aiogram.filters import Command
 from aiogram.types import InaccessibleMessage
 from aiogram_sentinel import rate_limit, debounce
 
-from database.DataBase import DataBase
+from core.database import DataBase
 from sqlalchemy import select
 
-from bot.KeyboardCreator import KeyboardCreator
+from core.keyboard_creator import KeyboardCreator
 
 from loguru import logger
 
@@ -26,7 +26,8 @@ async def cmd_start(message: types.Message):
                 users = DataBase.get_users()
 
                 response = session.scalar(
-                    select(users).where(users.tg_id == message.chat.id))  # type: ignore
+
+                    select(users).where(users.tg_id == message.chat.id))
 
                 if response:
                     await message.answer("С возращением!")

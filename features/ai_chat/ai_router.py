@@ -1,17 +1,14 @@
-from aiogram import Router, types, F
-from aiogram.types import InaccessibleMessage
-from aiogram.fsm.context import FSMContext
-from aiogram_sentinel import rate_limit, debounce
-
-from ai.AiManager import AiManager
-from bot.KeyboardCreator import KeyboardCreator
-from text_config.TextConfigManager import TextConfigManager
-from states.StatesManager import StatesManager
-
-from database.DataBase import DataBase
-from sqlalchemy import select
-
 from loguru import logger
+from sqlalchemy import select
+from core.database import DataBase
+from core.states_manager import StatesManager
+from core.text_config_manager import TextConfigManager
+from core.keyboard_creator import KeyboardCreator
+from features.ai_chat.ai_manager import AiManager
+from aiogram_sentinel import rate_limit, debounce
+from aiogram.fsm.context import FSMContext
+from aiogram.types import InaccessibleMessage
+from aiogram import Router, types, F
 
 
 ai_menu_router = Router()
@@ -29,7 +26,8 @@ async def change_mod_request(callback: types.CallbackQuery,
             await callback.message.answer(text="Напиши свой вопрос😊😁")
             await state.set_state(StatesManager.wait_query_get_response_ai)
         except Exception as error:
-            logger.error(f"Ошибка при смене состояния в change_mod_request: {error}")
+            logger.error(
+                f"Ошибка при смене состояния в change_mod_request: {error}")
 
     await callback.answer()
 
@@ -51,15 +49,17 @@ async def wait_query_get_response_ai(message: types.Message,
                     users = DataBase.get_users()
 
                     user = session.scalar(
-                        select(users).where(users.tg_id == message.chat.id)  # type: ignore
+                        select(users).where(users.tg_id ==
+                                            message.chat.id)
                     )
 
                     if user:
-                        user.use_ai = "1"  # type: ignore
+                        user.use_ai = "1"
 
                         session.commit()
             except Exception as error:
-                logger.error(f"Ошибка записи статуса использования ai в БД: {error}")
+                logger.error(
+                    f"Ошибка записи статуса использования ai в БД: {error}")
         except Exception as error:
             logger.error(f"Ошибка при работе с нейронкой: {error}")
 

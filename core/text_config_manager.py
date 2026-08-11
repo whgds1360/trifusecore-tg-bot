@@ -18,7 +18,7 @@ class TextConfigManager(BaseModel):
     config: ClassVar[Dict[str, str]] = Field(default={}, init=True, repr=True)
 
     @classmethod
-    def load_config(cls, path: str = "text_config/config.json") -> None:
+    def load_config(cls, path: str = "config.json") -> None:
         try:
             file_path = Path(path)
 

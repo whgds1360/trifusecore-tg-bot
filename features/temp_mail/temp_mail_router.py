@@ -2,12 +2,12 @@ from aiogram import Router, types, F
 from aiogram.types import InaccessibleMessage
 from aiogram_sentinel import rate_limit, debounce
 
-from database.DataBase import DataBase
+from core.database import DataBase
 from sqlalchemy import select
 
-from bot.KeyboardCreator import KeyboardCreator
-from mail.TempMailManager import TempMailManager
-from text_config.TextConfigManager import TextConfigManager
+from core.keyboard_creator import KeyboardCreator
+from features.temp_mail.temp_mail_manager import TempMailManager
+from core.text_config_manager import TextConfigManager
 
 from typing import Dict
 from loguru import logger
@@ -27,13 +27,15 @@ async def make_mail(callback: types.CallbackQuery) -> None:
                 users = DataBase.get_users()
 
                 user = session.scalar(
-                    select(users).where(users.tg_id == callback.message.chat.id)  # type: ignore
+                    select(users).where(users.tg_id ==
+                                        callback.message.chat.id)  # type: ignore
                 )
 
                 user.use_temp_mail = "1"  # type: ignore
                 session.commit()
         except Exception as error:
-            logger.error(f"Ошибка изменения статуса пользования временной почтой: {error}")
+            logger.error(
+                f"Ошибка изменения статуса пользования временной почтой: {error}")
 
         email = TempMailManager()
         if email:

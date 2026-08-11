@@ -43,7 +43,8 @@ class ForwardManager:
                                     )
                                     if user_info:
                                         user = user_info[0]
-                                        name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+                                        name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip(
+                                        )
 
                                         await bot.send_message(
                                             chat_id=chat_id,
@@ -51,7 +52,8 @@ class ForwardManager:
                                         )
 
                                 except Exception as error:
-                                    logger.error(f"Не удалось получить имя при перессылке: {error}")
+                                    logger.error(
+                                        f"Не удалось получить имя при перессылке: {error}")
 
         except CancelledError:
             pass

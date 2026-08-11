@@ -1,5 +1,5 @@
-from resources.ResourcesManager import ResourcesManager
-from text_config.TextConfigManager import TextConfigManager
+from core.resources_manager import ResourcesManager
+from core.text_config_manager import TextConfigManager
 
 from asyncio import run
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
         ResourcesManager.load_config()
         TextConfigManager.load_config()
 
-        from bot.Core import Core
+        from core.сore import Core
         run(Core.initialization_tg_bot())
 
     except Exception as error:

@@ -3,14 +3,14 @@ from aiogram.types import InaccessibleMessage
 from aiogram.fsm.context import FSMContext
 from aiogram_sentinel import rate_limit, debounce
 
-from database.DataBase import DataBase
+from core.database import DataBase
 from sqlalchemy import select
 
-from bot.KeyboardCreator import KeyboardCreator
-from forward.ForwardManager import ForwardManager
-from states.StatesManager import StatesManager
-from utils.UtilsManager import UtilsManager
-from text_config.TextConfigManager import TextConfigManager
+from core.keyboard_creator import KeyboardCreator
+from features.forwarding.forward_manager import ForwardManager
+from core.states_manager import StatesManager
+from shared.help_func_manager import UtilsManager
+from core.text_config_manager import TextConfigManager
 
 from typing import Dict
 from loguru import logger
@@ -25,7 +25,7 @@ active_listeners: Dict[int, Task] = {}
 @debounce(2)
 async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
     if callback.message and not isinstance(callback.message,
-                                          InaccessibleMessage):
+                                           InaccessibleMessage):
         chat_id = callback.message.chat.id
 
         if chat_id in active_listeners:
@@ -34,28 +34,30 @@ async def begin_forward(callback: types.CallbackQuery, bot: Bot) -> None:
 
         try:
             with DataBase.get_sessionmaker()() as session:
-                users = DataBase.get_users() 
+                users = DataBase.get_users()
                 user = session.scalar(
-                        select(users).where(users.tg_id == chat_id)) #type: ignore
+                    # type: ignore
+                    select(users).where(users.tg_id == chat_id))
 
                 if user:
-                    if user.is_active_forward == "1": #type: ignore
+                    if user.is_active_forward == "1":  # type: ignore
                         await callback.answer(text="❗У вас уже включена пересылка❗", show_alert=True)
                         return
 
-                    if not user.forward_config: #type: ignore
+                    if not user.forward_config:  # type: ignore
                         await callback.answer(text="❗У вас не настроен конфиг❗", show_alert=True)
                         return
 
-                    ready_config = UtilsManager.parse_config_for_forward(user.forward_config) #type: ignore
+                    ready_config = UtilsManager.parse_config_for_forward(
+                        user.forward_config)  # type: ignore
 
                     if ('VK_TOKEN' not in ready_config
-                        or 'VK_COMMUNITY_TOKEN' not in ready_config):
+                            or 'VK_COMMUNITY_TOKEN' not in ready_config):
 
                         await callback.answer(text="❗ В конфиге отсутствуют обязательные поля!❗", show_alert=True)
                         return
 
-                    user.is_active_forward = "1" #type: ignore
+                    user.is_active_forward = "1"  # type: ignore
                     session.commit()
 
                     task = create_task(
@@ -101,7 +103,8 @@ async def stop_forward(callback: types.CallbackQuery) -> None:
                     users = DataBase.get_users()
 
                     user = session.scalar(
-                        select(users).where(users.tg_id == chat_id))  # type: ignore
+                        # type: ignore
+                        select(users).where(users.tg_id == chat_id))
 
                     if user:
                         user.is_active_forward = "0"
@@ -128,7 +131,8 @@ async def config_forward(callback: types.CallbackQuery,
         with DataBase.get_sessionmaker()() as session:
             users = DataBase.get_users()
 
-            response = session.scalar(select(users.have_forward_config).where(users.tg_id == callback.message.chat.id)) # type: ignore
+            response = session.scalar(select(users.have_forward_config).where(
+                users.tg_id == callback.message.chat.id))  # type: ignore
             if response == "1":
                 await callback.answer(text="❗У вас уже определен конфиг❗", show_alert=True)
 
@@ -156,7 +160,8 @@ async def post_forward_config(message: types.Message,
             with DataBase.get_sessionmaker()() as session:
                 users = DataBase.get_users()
 
-                user = session.scalar(select(users).where(users.tg_id == message.chat.id)) #type: ignore
+                user = session.scalar(select(users).where(
+                    users.tg_id == message.chat.id))  # type: ignore
                 if user:
                     user.forward_config = message.text
                     user.have_forward_config = "1"
@@ -180,7 +185,8 @@ async def delete_forward_config(callback: types.CallbackQuery) -> None:
             with DataBase.get_sessionmaker()() as session:
                 users = DataBase.get_users()
 
-                user = session.scalar(select(users).where(users.tg_id == callback.message.chat.id)) #type: ignore
+                user = session.scalar(select(users).where(
+                    users.tg_id == callback.message.chat.id))  # type: ignore
                 if user:
                     if user.have_forward_config == "1":  # type: ignore
                         if user.is_active_forward == "0":  # type: ignore
