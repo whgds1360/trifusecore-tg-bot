@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Setup Python Environment
-        uses: ./.github/actions/install-worker.yml
+        uses: ./.github/actions/install-worker
         with:
           ai-api-key: ${{ secrets.AI_API_KEY }}
           ai-model: ${{ secrets.AI_MODEL }}
@@ -28,7 +28,7 @@ jobs:
 
     steps:
         - name: Setup Python Environment
-          uses: ./.github/actions/install-worker.yml
+          uses: ./.github/actions/install-worker
           with:
             ai-api-key: ${{ secrets.AI_API_KEY }}
             ai-model: ${{ secrets.AI_MODEL }}
