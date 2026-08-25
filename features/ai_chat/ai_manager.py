@@ -1,7 +1,6 @@
 from typing import final, ClassVar, Optional
 from groq import AsyncGroq
 from core.resources_manager import ResourcesManager
-from loguru import logger
 
 
 @final
@@ -18,6 +17,7 @@ class AiManager:
                     "content": content,
                 }
             ],
-            model="llama-3.3-70b-versatile",
+            model=ResourcesManager.AI_MODEL,
         )
+
         return chat_completion.choices[0].message.content
