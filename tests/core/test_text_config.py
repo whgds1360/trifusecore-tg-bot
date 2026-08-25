@@ -8,7 +8,7 @@ def load_test_data() -> Path:
     return Path(__file__).parent.joinpath("configs_for_tests", "config.json")
 
 
-def test_resource_manager(load_test_data) -> None:
+def test_config_manager(load_test_data) -> None:
     TextConfigManager.load_config(path=load_test_data)
 
     config = TextConfigManager.get_config()
