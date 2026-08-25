@@ -17,7 +17,7 @@ def test_resource_manager(load_test_data) -> None:
             and config["forward_info"] != "")
 
     assert (config["ai_info"] is not None
-            config["forward_info"] != "")
+            and config["forward_info"] != "")
 
     assert (config["forward_info"] is not None
             and config["forward_info"] != "")
