@@ -5,7 +5,7 @@ from core.text_config_manager import TextConfigManager
 
 @fixture
 def load_test_data() -> Path:
-    return Path(__file__).parent.joinpath("configs_for_tests", "config.json")
+    return Path(__file__).parent.parent.joinpath("configs_for_tests", "config.json")
 
 
 def test_config_manager(load_test_data) -> None:

@@ -1,6 +1,5 @@
 from pytest import fixture
 from features.temp_mail.temp_mail_manager import TempMailManager
-from asyncio import run
 
 
 @fixture
