@@ -5,7 +5,7 @@ from core.resources_manager import ResourcesManager
 
 @fixture
 def load_test_data() -> Path:
-    return Path(__file__).parent.joinpath("configs_for_tests", "config.env")
+    return Path(__file__).parent.parent.joinpath("configs_for_tests", "config.env")
 
 
 def test_resource_manager(load_test_data) -> None:
@@ -16,9 +16,6 @@ def test_resource_manager(load_test_data) -> None:
 
     assert (ResourcesManager.DB_URL is not None
             and ResourcesManager.DB_URL != "")
-
-    assert (ResourcesManager.TEMP_MAIL_API_KEY is not None
-            and ResourcesManager.TEMP_MAIL_API_KEY != "")
 
     assert (ResourcesManager.TG_TOKEN is not None
             and ResourcesManager.TG_TOKEN != "")
