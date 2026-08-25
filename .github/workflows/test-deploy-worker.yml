@@ -10,6 +10,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup Python Environment
         uses: ./.github/actions/install-worker
         with:
@@ -27,6 +31,10 @@ jobs:
     needs: test
 
     steps:
+
+        - name: Checkout code
+          uses: actions/checkout@v4
+
         - name: Setup Python Environment
           uses: ./.github/actions/install-worker
           with:
