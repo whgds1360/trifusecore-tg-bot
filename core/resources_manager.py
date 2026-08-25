@@ -16,7 +16,8 @@ class ResourcesManager(BaseModel):
         validate_default=True,
     )
 
-    DEFAULT_ENV_FILE: ClassVar[Path] = Path("config.env")
+    DEFAULT_ENV_FILE: ClassVar[Path] = Path(
+        __file__).parent.parent.joinpath("config.env")
 
     TG_TOKEN: ClassVar[str]
     DB_URL: ClassVar[str]

@@ -1,4 +1,3 @@
-"""
 from pytest import fixture
 from core.resources_manager import ResourcesManager
 from asyncio import run
@@ -19,4 +18,3 @@ def test_ai_manager(load_test_data) -> None:
     assert (response is not None
             and response != ""
             and isinstance(response, str))
-            """
