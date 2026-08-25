@@ -1,0 +1,43 @@
+name: 'Setup Python Environment'
+description: 'Sets up Python, creates config.env and installs dependencies'
+
+inputs:
+  ai-api-key:
+    description: 'AI API Key'
+    required: true
+  ai-model:
+    description: 'AI Model'
+    required: true
+  db-url:
+    description: 'Database URL'
+    required: true
+  tg-token:
+    description: 'Telegram Token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set UTF-8 encoding
+      run: chcp 65001
+      shell: cmd
+
+    - name: Make config file
+      run: |
+        echo AI_API_KEY=${{ inputs.ai-api-key }}>> config.env
+        echo AI_MODEL=${{ inputs.ai-model }}>> config.env
+        echo DB_URL=${{ inputs.db-url }}>> config.env
+        echo TG_TOKEN=${{ inputs.tg-token }}>> config.env
+      shell: cmd
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install requirements
+      run: pip install -r requirements.txt
+      shell: cmd
