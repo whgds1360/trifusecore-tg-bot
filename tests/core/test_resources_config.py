@@ -8,7 +8,7 @@ def load_test_data() -> Path:
     return Path(__file__).parent.joinpath("configs_for_tests", "config.env")
 
 
-def test_resource_manager(load_test_data):
+def test_resource_manager(load_test_data) -> None:
     ResourcesManager.load_config(env_path=load_test_data)
 
     assert (ResourcesManager.AI_API_KEY is not None
