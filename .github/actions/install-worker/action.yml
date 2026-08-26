@@ -18,20 +18,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Set UTF-8 encoding
-      run: chcp 65001
-      shell: cmd
-
     - name: Make config file
       run: |
         echo AI_API_KEY=${{ inputs.ai-api-key }}>> config.env
         echo AI_MODEL=${{ inputs.ai-model }}>> config.env
         echo DB_URL=${{ inputs.db-url }}>> config.env
         echo TG_TOKEN=${{ inputs.tg-token }}>> config.env
-      shell: cmd
+      shell: bash
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -40,4 +33,4 @@ runs:
 
     - name: Install requirements
       run: pip install -r requirements.txt
-      shell: cmd
+      shell:  bash
