@@ -9,7 +9,7 @@ from typing import final, Dict
 
 @final
 class ForwardManager:
-
+    """Управляет пересылкой сообщений из ВКонтакте в Telegram."""
     @staticmethod
     async def vk_listener(
         bot: Bot,

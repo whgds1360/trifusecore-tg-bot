@@ -5,6 +5,7 @@ from typing import final, Optional
 
 @final
 class TempMailManager:
+    """Управляет временной почтой через сервис Tenminemail."""
 
     def __init__(self) -> None:
         try:
@@ -13,6 +14,11 @@ class TempMailManager:
             logger.info(f"Ошибка инициализации временой почты: {error}")
 
     def get_inbox(self) -> Optional[str]:
+        """Получает все письма из временного почтового ящика.
+
+        Returns:
+            Optional[str]: Строка со всеми письмами или None при ошибке.
+        """
         try:
             result = ""
             messages = self.email.get_inbox()
