@@ -5,8 +5,10 @@ from typing import final
 
 @final
 class KeyboardCreator():
+    """Создает inline-клавиатуры для всех меню бота."""
     @staticmethod
     def main_menu() -> InlineKeyboardMarkup:
+        """Главное меню бота."""
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -30,6 +32,7 @@ class KeyboardCreator():
 
     @staticmethod
     def forward_menu() -> InlineKeyboardMarkup:
+        """Меню перессылки из ВК в Телеграмм."""
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -57,6 +60,7 @@ class KeyboardCreator():
 
     @staticmethod
     def ai_mod_menu() -> InlineKeyboardMarkup:
+        """Меню для чата с нейронкой."""
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [
@@ -78,6 +82,7 @@ class KeyboardCreator():
 
     @staticmethod
     def temp_mail_menu() -> InlineKeyboardMarkup:
+        """Меню для управления временной почтой."""
         return InlineKeyboardMarkup(
             inline_keyboard=[
                 [

@@ -20,9 +20,9 @@ from typing import final
 class Core:
     @staticmethod
     def _patch_ssl() -> None:
-        """
-        Применяет патч для отключения проверки SSL сертификатов
-        т.к. проблему с сертификатом я не решил
+        """Применяет патч для отключения проверки SSL сертификатов.
+
+        Используется для обхода проблем с SSL сертификатами при запросах к API.
         """
         _old_create_connection = aiohttp.TCPConnector.__init__
 
@@ -38,6 +38,23 @@ class Core:
 
     @staticmethod
     async def initialization_tg_bot() -> None:
+        """Инициализирует и запускает Telegram бота.
+
+        Выполняет:
+            1. Применяет SSL патч
+            2. Подключается к базе данных
+            3. Создает экземпляр бота и диспетчера
+            4. Настраивает защиту от флуда
+            5. Сбрасывает статусы пересылки в БД
+            6. Подключает все роутеры
+            7. Запускает поллинг
+
+        Returns:
+            None: Метод запускает бесконечный процесс поллинга.
+
+        Raises:
+            Exception: При ошибке подключения к БД или запуска бота.
+        """
         Core._patch_ssl()
         DataBase.connect(db_url=ResourcesManager.DB_URL)
 

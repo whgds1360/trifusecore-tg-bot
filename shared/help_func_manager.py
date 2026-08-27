@@ -6,10 +6,12 @@ class UtilsManager:
 
     @staticmethod
     def parse_config_for_forward(config_text: str) -> Dict[str, str]:
-        """
-        Парсит строку конфига с разделителем &
+        """Парсит строку конфига с разделителем &.
+
         Пример: VK_TOKEN=token&VK_COMMUNITY_TOKEN=123
-        Возвращает словарь с параметрами
+
+        Return:
+            Словарь с параметрами
         """
         config_dict = {}
 
